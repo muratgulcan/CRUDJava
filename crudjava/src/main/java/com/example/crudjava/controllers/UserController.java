@@ -3,10 +3,9 @@ package com.example.crudjava.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.crudjava.repos.UserRepository;
+import com.example.crudjava.services.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,44 +19,35 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userService.getUsers();
     }
 
     @PostMapping
     public User createUser(@RequestBody User newUser) {
-        return userRepository.save(newUser);
+        return userService.saveUser(newUser);
     }
 
     @GetMapping("/{user_id}")
     public User getOneUser(@PathVariable Long user_id) {
-        return userRepository.findById(user_id).orElse(null);
+        return userService.getUser(user_id);
     }
 
     @PutMapping("/{user_id}")
     public User updateUser(@PathVariable Long user_id, @RequestBody User newUser) {
-        Optional<User> user = userRepository.findById(user_id);
-        if (user.isPresent()) {
-            User foundUser = user.get();
-            foundUser.setUsername(newUser.getUsername());
-            foundUser.setPassword(newUser.getPassword());
-            userRepository.save(foundUser);
-            return foundUser;
-        } else {
-            return null;
-        }
+        return userService.updateUser(user_id, newUser);
     }
 
     @DeleteMapping("{user_id}")
     public void deleteUser(@PathVariable Long user_id) {
-        userRepository.deleteById(user_id);
+        userService.deleteUser(user_id);
     }
 
 }

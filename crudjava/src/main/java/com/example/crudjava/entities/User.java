@@ -12,6 +12,7 @@ public class User {
 
 	@Id
 	Long id;
+
 	String username;
 	String password;
 }
